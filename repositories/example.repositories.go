@@ -1,10 +1,9 @@
 package repositories
 
 import (
-	"template-fiber/db"
 	"template-fiber/entities"
 
-	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 type ExampleRepository struct {
@@ -14,7 +13,6 @@ func NewExampleRepository() *ExampleRepository {
 	return &ExampleRepository{}
 }
 
-func (r *ExampleRepository) Create(c *fiber.Ctx, data *entities.Example) error {
-	db := db.GetDbContext(c)
+func (r *ExampleRepository) Create(db *gorm.DB, data *entities.Example) error {
 	return db.Create(data).Error
 }

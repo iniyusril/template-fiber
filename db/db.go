@@ -4,7 +4,6 @@ import (
 	"sync"
 	"template-fiber/entities"
 
-	"github.com/gofiber/fiber/v2"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -20,7 +19,7 @@ func Init() {
 func Get() *gorm.DB {
 
 	once.Do(func() {
-		dsn := "host=localhost user=root password=root dbname=test_db port=5432 sslmode=disable TimeZone=Asia/Jakarta"
+		dsn := "host=localhost user=yusril password=hahahehe dbname=testdb port=5432 sslmode=disable TimeZone=Asia/Jakarta"
 		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 		if err != nil {
 			panic(err)
@@ -29,13 +28,4 @@ func Get() *gorm.DB {
 	})
 
 	return db
-}
-
-func GetDbContext(c *fiber.Ctx) *gorm.DB {
-	dbctx, ok := c.Locals("db").(*gorm.DB)
-	if !ok {
-		dbctx = Get()
-	}
-	dbctx.WithContext(c.Context())
-	return dbctx
 }

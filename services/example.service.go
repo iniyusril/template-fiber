@@ -1,13 +1,13 @@
 package services
 
 import (
-	"template-fiber/db"
+	"errors"
+	"template-fiber/context"
 	"template-fiber/dto"
 	"template-fiber/entities"
 	"template-fiber/factory"
 	"template-fiber/repositories"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/stroiman/go-automapper"
 	"gorm.io/gorm"
 )
@@ -22,21 +22,20 @@ func NewExampleService(f *factory.Factory) *ExampleService {
 	}
 }
 
-func (s *ExampleService) Create(c *fiber.Ctx, payload *dto.ExampleRequest) (*entities.Example, error) {
+func (s *ExampleService) Create(c *context.CustomContex, payload *dto.ExampleRequest) (*entities.Example, error) {
 	var entity = new(entities.Example)
 
 	automapper.MapLoose(payload, &entity)
 
-	err := db.Get().Transaction(func(tx *gorm.DB) error {
-		c.Locals("db", tx)
+	err := c.Transaction(func(tx *gorm.DB) error {
 
-		err := s.ExampleRepository.Create(c, entity)
+		err := s.ExampleRepository.Create(tx, entity)
 		if err != nil {
 			return err
 		}
 
-		// return errors.New("throw error")
-		return nil
+		return errors.New("throw error")
+		// return nil
 	})
 
 	return entity, err

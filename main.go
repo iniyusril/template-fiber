@@ -2,17 +2,19 @@ package main
 
 import (
 	"template-fiber/factory"
+	"template-fiber/middleware"
 	"template-fiber/routes"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	app := fiber.New()
+	app := echo.New()
 
 	f := factory.NewFactory()
+	app.Use(middleware.FillCustomContex)
 	route := routes.NewRoutes(app, f)
 	route.RegisterRoutes()
 
-	app.Listen((":9000"))
+	app.Logger.Fatal(app.Start(":9000"))
 }

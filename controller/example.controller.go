@@ -2,12 +2,13 @@ package controller
 
 import (
 	"net/http"
+	"template-fiber/context"
 	"template-fiber/dto"
 	"template-fiber/dto/response"
 	"template-fiber/factory"
 	"template-fiber/services"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/labstack/echo/v4"
 )
 
 type ExampleController struct {
@@ -20,18 +21,21 @@ func NewExampleController(f *factory.Factory) *ExampleController {
 	}
 }
 
-func (s *ExampleController) Create(c *fiber.Ctx) error {
+func (s *ExampleController) Create(c echo.Context) error {
 
 	var payload = new(dto.ExampleRequest)
+	var cc = c.(*context.CustomContex)
 
-	if err := c.BodyParser(payload); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(response.ErrorBuilder(err))
+	if err := c.Bind(payload); err != nil {
+		res := response.ErrorBuilder(err)
+		return c.JSON(http.StatusBadRequest, res)
 	}
 
-	data, err := s.ExampleService.Create(c, payload)
+	data, err := s.ExampleService.Create(cc, payload)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(response.ErrorBuilder(err))
+		errRes := response.ErrorBuilder(err)
+		return c.JSON(http.StatusInternalServerError, errRes)
 	}
 
-	return c.JSON(response.SuccessBuilder(data))
+	return c.JSON(http.StatusOK, response.SuccessBuilder(data))
 }

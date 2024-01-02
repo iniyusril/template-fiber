@@ -4,15 +4,15 @@ import (
 	"template-fiber/controller"
 	"template-fiber/factory"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/labstack/echo/v4"
 )
 
 type Routes struct {
-	app               *fiber.App
+	app               *echo.Echo
 	ExampleController *controller.ExampleController
 }
 
-func NewRoutes(app *fiber.App, f *factory.Factory) Routes {
+func NewRoutes(app *echo.Echo, f *factory.Factory) Routes {
 	return Routes{
 		app:               app,
 		ExampleController: controller.NewExampleController(f),
@@ -25,7 +25,7 @@ func (r Routes) RegisterRoutes() {
 
 	exampleGroup := app.Group("v1/example")
 	{
-		exampleGroup.Post("", r.ExampleController.Create)
+		exampleGroup.POST("", r.ExampleController.Create)
 	}
 
 }
